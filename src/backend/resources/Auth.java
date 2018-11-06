@@ -99,10 +99,10 @@ public class Auth extends HttpServlet {
 		for(int i = 0; i < skills.size(); i++) 
 			sids[i] = skills.get(i).getAsInt();
 		
-		JsonArray areas = obj.get("skills").getAsJsonArray();
+		JsonArray areas = obj.get("areas").getAsJsonArray();
 		int[] aids = new int[areas.size()];
 		for(int i = 0; i < areas.size(); i++) 
-			sids[i] = areas.get(i).getAsInt();
+			aids[i] = areas.get(i).getAsInt();
 
 		User newUser = User.register(name, username, email, password, aids, sids);
 		if (newUser == null)

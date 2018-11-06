@@ -1,13 +1,16 @@
 package backend.resources;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import backend.classes.Project;
 import backend.classes.UnauthorizedError;
@@ -73,7 +76,36 @@ public class Projects extends HttpServlet {
 	 * POST /projects/
 	 */
 	protected void createProject(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO
+		JsonElement tree = Utils.getJsonData(request);
+		JsonObject obj = tree.getAsJsonObject();
+		
+		String title = obj.get("title").getAsString();
+		String description = obj.get("description").getAsString();
+		
+		JsonArray skills = obj.get("skills").getAsJsonArray();
+		int[] sids = new int[skills.size()];
+		for(int i = 0; i < skills.size(); i++) 
+			sids[i] = skills.get(i).getAsInt();
+		
+		JsonArray areas = obj.get("areas").getAsJsonArray();
+		int[] aids = new int[areas.size()];
+		for(int i = 0; i < areas.size(); i++) 
+			aids[i] = areas.get(i).getAsInt();
+		
+		User currUser = (User)request.getSession().getAttribute("user");
+		try {
+			Project newProj = currUser.createProject(title, description, aids, sids);
+			
+			if (newProj == null) {
+				Utils.errorResponse(response);
+			}
+			else {
+				Utils.jsonResponse(response, newProj);
+			}			
+		}
+		catch (UnauthorizedError ex) {
+			Utils.unauthorizedResponse(response);
+		}
 	}
 
 	/** 

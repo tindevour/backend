@@ -194,4 +194,14 @@ public class User implements Common {
 			throw new UnauthorizedError();
 		}
 	}
+	
+	public Project createProject(String title, String description, int[] aids, int[] sids) throws UnauthorizedError {
+		if (this.isAuthenticated) {
+			Project proj = Project.create(title, description, this.username, aids, sids);
+			return proj;
+		}
+		else {
+			throw new UnauthorizedError();
+		}
+	}
 }

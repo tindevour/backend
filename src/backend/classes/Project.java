@@ -54,4 +54,28 @@ public class Project implements Common {
 			return NOT_FOUND;
 		}
 	}
+
+	public static Project create(String title, String description, String owner, int[] aids, int[] sids) {
+		try {
+			String projectInsertionQuery = "insert into projects(title, description, owner) values(?, ?, ?)";
+			Database.executeUpdate(projectInsertionQuery, title, description, owner);
+
+			ResultSet rs = Database.executeQuery("select pid from projects where title=? and owner=? and description=?", title, owner, description);
+			rs.next();
+			int pid = rs.getInt(1);
+			
+			String skillInsertionQuery = "insert into project_skills(pid, sid) values(?, ?)";
+			for(int i = 0; i < sids.length; i++)
+				Database.executeUpdate(skillInsertionQuery, pid, sids[i]);
+				
+			String areaInsertionQuery = "insert into project_areas(pid, aid) values(?, ?)";
+			for(int i = 0; i < aids.length; i++)
+				Database.executeUpdate(areaInsertionQuery, pid, aids[i]);
+			
+			return Project.getProjectById(pid);
+		}
+		catch (SQLException ex) {
+			return null;
+		}		
+	}
 }
