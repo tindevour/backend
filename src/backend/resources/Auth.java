@@ -73,7 +73,14 @@ public class Auth extends HttpServlet {
 	 * POST /auth/logout
 	 */
 	protected void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			session.invalidate();
+		}
+		else {
+			// don't need to logout, already logged out
+		}
+		Utils.okResponse(response);
 	}
 
 	/**
