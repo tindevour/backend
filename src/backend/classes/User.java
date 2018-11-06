@@ -88,4 +88,37 @@ public class User implements Common {
 			throw new UnauthorizedError();
 		}
 	}
+	
+	public static User register(String name, String username, String email, String password, int[] aids, int[] sids) {
+		try {
+			Database.setAutoCommit(false);
+			
+			String userInsertionQuery = "insert into users(name, username, password, email) values(?, ?, ?, ?)";
+			Database.executeUpdate(userInsertionQuery, name, username, password, email);
+			
+			String skillsInsertionQuery = "insert into user_skills(username, sid) values(?, ?)";
+			for(int i = 0; i < sids.length; i++) 
+				Database.executeUpdate(skillsInsertionQuery, username, sids[i]);
+			
+			String areasInsertionQuery = "insert into user_aois(username, aid) values(?, ?)";
+			for(int i = 0; i < aids.length; i++) 
+				Database.executeUpdate(areasInsertionQuery, username, aids[i]);			
+
+			Database.commit();
+			Database.setAutoCommit(true);
+			
+			User currUser = new User(username);
+			currUser.isAuthenticated = true;
+			return currUser;
+		}
+		catch (SQLException ex) {
+			try {
+				Database.rollback();				
+			}
+			catch (SQLException exc) {
+				
+			}
+			return null;
+		}
+	}
 }

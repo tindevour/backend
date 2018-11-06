@@ -30,6 +30,18 @@ public class Database {
 		pass = password;
 	}
 
+	public static void setAutoCommit(boolean status) throws SQLException {
+		conn.setAutoCommit(status);
+	}
+	
+	public static void commit() throws SQLException {
+		conn.commit(); 
+	}
+	
+	public static void rollback() throws SQLException {
+		conn.rollback();
+	}
+	
 	public static void init() {
 		dbname = System.getenv("DB_NAME");
 		user = System.getenv("DB_USER");

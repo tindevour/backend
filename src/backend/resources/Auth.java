@@ -87,6 +87,29 @@ public class Auth extends HttpServlet {
 	 * POST /auth/register
 	 */
 	protected void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO
+		JsonElement tree = Utils.getJsonData(request);
+		JsonObject obj = tree.getAsJsonObject();
+		String username = obj.get("username").getAsString();
+		String email = obj.get("email").getAsString();
+		String name = obj.get("name").getAsString();;
+		String password = obj.get("password").getAsString();;
+		
+		JsonArray skills = obj.get("skills").getAsJsonArray();
+		int[] sids = new int[skills.size()];
+		for(int i = 0; i < skills.size(); i++) 
+			sids[i] = skills.get(i).getAsInt();
+		
+		JsonArray areas = obj.get("skills").getAsJsonArray();
+		int[] aids = new int[areas.size()];
+		for(int i = 0; i < areas.size(); i++) 
+			sids[i] = areas.get(i).getAsInt();
+
+		User newUser = User.register(name, username, email, password, aids, sids);
+		if (newUser == null)
+			response.sendError(500, "Registeration failed");
+		else {
+			request.getSession().setAttribute("user", newUser);
+			Utils.okResponse(response);
+		}
 	}
 }
