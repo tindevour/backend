@@ -7,8 +7,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import backend.resources.Utils;
+import backend.classes.Notification;
+import backend.classes.UnauthorizedError;
 import backend.classes.User;
+import backend.resources.Utils;
 
 /**
  * Servlet implementation class Users
@@ -39,7 +41,7 @@ public class Users extends HttpServlet {
 				getFeed(request, response);
 				break;
 			case "notifications":
-				getNotifications(request, response);
+				getNotifications(request, response, username);
 				break;
 			case "chats":
 				getChats(request, response);
@@ -111,8 +113,15 @@ public class Users extends HttpServlet {
 	/**
 	 * GET /users/:user/notifications
 	 */
-	protected void getNotifications(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-		
+	protected void getNotifications(HttpServletRequest request, HttpServletResponse response, String username) throws ServletException, IOException {
+		User user = new User(username);
+		try {
+			Notification[] notifs = user.notifications();
+			Utils.jsonResponse(response, notifs);
+		}
+		catch (UnauthorizedError ex) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are not authorized to access notifications of user: " + username);
+		}
 	}
 
 	/**

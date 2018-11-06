@@ -3,9 +3,11 @@ package backend.classes;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import backend.classes.Common;
+import backend.classes.Notification;
+import backend.classes.UnauthorizedError;
 import backend.database.Database;
 
-import backend.classes.Common;
 
 public class User implements Common {
 	public String username;
@@ -15,6 +17,8 @@ public class User implements Common {
 	public String moreLinks;
 	public String imagePath;
 
+	private boolean isAuthenticated = false;
+	
 	public static User NOT_FOUND = new User("", "", "", "", "", "");
 	
 	public User(String username, String email, String location, String resumeLink, String moreLinks, String imagePath) {
@@ -26,8 +30,31 @@ public class User implements Common {
 		this.imagePath = imagePath;
 	}
 	
+	public User(String username) {
+		this.username = username;
+	}
+	
 	public boolean isNotFound() {
 		return this == NOT_FOUND;
+	}
+	
+	public boolean authenticate(String password) {
+		String query = "select password from users where username=?";
+		try {
+			ResultSet rs = Database.executeQuery(query, this.username);
+			boolean hasNext = rs.next();
+			if (hasNext) {
+				String ogpwd = rs.getString(1);
+				this.isAuthenticated = true;
+				return password.equals(ogpwd);
+			}
+			else {
+				return false;
+			}
+		}
+		catch (SQLException ex ) {
+			return false;
+		}
 	}
 	
 	public static User getByUsername(String username) {
@@ -50,6 +77,15 @@ public class User implements Common {
 		}
 		catch (SQLException ex) {
 			return NOT_FOUND;
+		}
+	}
+	
+	public Notification[] notifications() throws UnauthorizedError {
+		if (this.isAuthenticated) {
+			return Notification.getUserNotifications(this.username);
+		}
+		else {
+			throw new UnauthorizedError();
 		}
 	}
 }
