@@ -138,25 +138,35 @@ public class User implements Common {
 		}
 	}
 	
-	public boolean reportSpam(String otherUser) {
-		try {
-			String query = "insert into user_spams(reporter, spammer) values(?, ?)";
-			Database.executeQuery(query, this.username, otherUser);
-			return true;
+	public boolean reportSpam(String otherUser) throws UnauthorizedError {
+		if (this.isAuthenticated) {
+			try {
+				String query = "insert into user_spams(reporter, spammer) values(?, ?)";
+				Database.executeQuery(query, this.username, otherUser);
+				return true;
+			}
+			catch(SQLException ex) {
+				return false;
+			}			
 		}
-		catch(SQLException ex) {
-			return false;
+		else {
+			throw new UnauthorizedError();
 		}
 	}
 	
-	public boolean reportSpam(int pid) {
-		try {
-			String query = "insert into project_spams(reporter, pid) values(?, ?)";
-			Database.executeQuery(query, this.username, pid);
-			return true;
+	public boolean reportSpam(int pid) throws UnauthorizedError {
+		if (this.isAuthenticated) {
+			try {
+				String query = "insert into project_spams(reporter, pid) values(?, ?)";
+				Database.executeQuery(query, this.username, pid);
+				return true;
+			}
+			catch(SQLException ex) {
+				return false;
+			}			
 		}
-		catch(SQLException ex) {
-			return false;
+		else {
+			throw new UnauthorizedError();
 		}
 	}
 }

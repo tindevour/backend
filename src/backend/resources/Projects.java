@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import backend.classes.Project;
+import backend.classes.UnauthorizedError;
 import backend.classes.User;
 
 /**
@@ -78,11 +79,16 @@ public class Projects extends HttpServlet {
 	 */
 	protected void reportSpam(HttpServletRequest request, HttpServletResponse response, int projectId) throws ServletException, IOException {
 		User currUser = (User)request.getSession().getAttribute("user");
-		boolean wasSuccessful = currUser.reportSpam(projectId);
-		if (wasSuccessful)
-			Utils.okResponse(response);
-		else
-			Utils.errorResponse(response);
+		try {
+			boolean wasSuccessful = currUser.reportSpam(projectId);
+			if (wasSuccessful)
+				Utils.okResponse(response);
+			else
+				Utils.errorResponse(response);
+		}
+		catch (UnauthorizedError ex) {
+			Utils.unauthorizedResponse(response);
+		}
 	}
 
 	/**
