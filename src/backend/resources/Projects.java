@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.JsonElement;
+
 import backend.classes.Project;
 import backend.classes.UnauthorizedError;
 import backend.classes.User;
@@ -49,7 +51,7 @@ public class Projects extends HttpServlet {
 				reportSpam(request, response, projectId);
 				break;
 			case "liking":
-				changeLiking(request, response);
+				changeLiking(request, response, projectId);
 				break;
 			}
 		}
@@ -94,7 +96,19 @@ public class Projects extends HttpServlet {
 	/**
 	 * POST /projects/:project/liking
 	 */
-	protected void changeLiking(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO
+	protected void changeLiking(HttpServletRequest request, HttpServletResponse response, int projectId) throws ServletException, IOException {
+		User currUser = (User)request.getSession().getAttribute("user");
+		JsonElement tree = Utils.getJsonData(request);
+		boolean like = tree.getAsJsonObject().get("like").getAsBoolean();
+		try {
+			boolean wasSuccessful = currUser.changeLiking(projectId, like);
+			if (wasSuccessful)
+				Utils.okResponse(response);
+			else
+				Utils.errorResponse(response);
+		}
+		catch (UnauthorizedError ex) {
+			Utils.unauthorizedResponse(response);
+		}
 	}
 }

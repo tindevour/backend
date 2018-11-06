@@ -169,4 +169,29 @@ public class User implements Common {
 			throw new UnauthorizedError();
 		}
 	}
+
+	public boolean changeLiking(int pid, boolean like) throws UnauthorizedError {
+		if (this.isAuthenticated) {
+			try {
+				ResultSet rs = Database.executeQuery("select * from project_likings where pid=? and username=?", pid, this.username);
+				boolean hasALiking = rs.next();
+				
+				if (hasALiking) {
+					String query = "update project_likings set likeDislike=? where pid=? and username=?";
+					Database.executeUpdate(query, like, pid, this.username);
+				}
+				else {
+					String query = "insert into project_likings(pid, username, likeDislike) values(?, ?, ?)";
+					Database.executeUpdate(query, pid, this.username, like);
+				}
+				return true;
+			}
+			catch(SQLException ex) {
+				return false;
+			}
+		}
+		else {
+			throw new UnauthorizedError();
+		}
+	}
 }
