@@ -41,7 +41,7 @@ public class Project implements Common {
 				String username = rs.getString(3);
 				int numberOfLikes = Integer.parseInt(rs.getString(5));
 				int numberOfDislikes = Integer.parseInt(rs.getString(6));
-				User user = User.getByUsername(username);
+				User user = new User(username);
 				
 				Project project = new Project(title, description, user, pid, numberOfLikes, numberOfDislikes);
 				return project;

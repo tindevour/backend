@@ -204,4 +204,19 @@ public class User implements Common {
 			throw new UnauthorizedError();
 		}
 	}
+	
+	public boolean act(String user, int pid, boolean accept) throws UnauthorizedError {
+		if (Project.getProjectById(pid).owner.username == this.username) {
+			try {
+				Database.executeUpdate("update project_requests set status=? where pid=? and from=?", accept, pid, user);				
+				return true;
+			}
+			catch(SQLException ex) {
+				return false;
+			}			
+		}
+		else {
+			throw new UnauthorizedError();
+		}
+	}
 }

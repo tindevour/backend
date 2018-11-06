@@ -7,6 +7,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import backend.classes.User;
+
 /**
  * Servlet implementation class Requests
  */
@@ -27,7 +32,24 @@ public class Requests extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO
+		JsonElement tree = Utils.getJsonData(request);
+		JsonObject obj = tree.getAsJsonObject();
+
+		String from = obj.get("from").getAsString();
+		int pid = obj.get("pid").getAsInt();
+		boolean accept = obj.get("accept").getAsBoolean();
+		
+		User user = (User)request.getSession().getAttribute("user");
+		try {			
+			boolean status = user.act(from, pid, accept);
+			if (status)
+				Utils.okResponse(response);
+			else
+				Utils.errorResponse(response);
+		}
+		catch(Exception ex) {
+			Utils.unauthorizedResponse(response);
+		}
 	}
 
 }
