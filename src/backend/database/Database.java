@@ -7,8 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.postgresql.Driver;
-
 
 public class Database {
 	static Connection conn;
@@ -45,16 +43,23 @@ public class Database {
 	}
 
 	public static void init(String dbname, String user, String pass) {
-		String url = "jdbc:postgresql://localhost/" + dbname;
-
 		try {
-			conn = DriverManager.getConnection(url, user, pass);
+			Class.forName("org.postgresql.Driver");
+			
+			String url = "jdbc:postgresql://localhost/" + dbname;
+
+			try {
+				conn = DriverManager.getConnection(url, user, pass);
+			}
+			catch (SQLException e) {
+				System.out.println("Exception: " + e);
+				e.printStackTrace();
+			}
+			isInitialized = true;			
 		}
-		catch (SQLException e) {
-			System.out.println("Exception: " + e);
-			e.printStackTrace();
+		catch (ClassNotFoundException ex) {
+			System.out.println("PostgreSQL JDBC Driver not found");
 		}
-		isInitialized = true;
 	}
 
 	public static PreparedStatement createPreparedStatement(String query, Object... args) throws SQLException {
