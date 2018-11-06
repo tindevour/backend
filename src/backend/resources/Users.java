@@ -76,7 +76,7 @@ public class Users extends HttpServlet {
 					changePassword(request, response);
 				break;
 			case "spam":
-				reportSpam(request, response);
+				reportSpam(request, response, username);
 				break;
 			}
 		}
@@ -114,8 +114,13 @@ public class Users extends HttpServlet {
 	/**
 	 * POST /users/:user/spam
 	 */
-	protected void reportSpam(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-		
+	protected void reportSpam(HttpServletRequest request, HttpServletResponse response, String username) throws ServletException, IOException {
+		User currUser = (User)request.getSession().getAttribute("user");
+		boolean wasSuccessful = currUser.reportSpam(username);
+		if (wasSuccessful)
+			Utils.okResponse(response);
+		else
+			Utils.errorResponse(response);
 	}
 	
 	/**

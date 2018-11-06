@@ -137,4 +137,15 @@ public class User implements Common {
 			throw new UnauthorizedError();
 		}
 	}
+	
+	public boolean reportSpam(String otherUser) {
+		try {
+			String query = "insert into user_spams(reporter, spammer) values(?, ?)";
+			Database.executeQuery(query, this.username, otherUser);
+			return true;
+		}
+		catch(SQLException ex) {
+			return false;
+		}
+	}
 }
