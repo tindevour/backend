@@ -21,9 +21,7 @@ public class Area implements Common{
 	public static Area[] getAllAreas() {
 		try {
 			ResultSet rs = Database.executeQuery("select area, aid from areas");
-			rs.last();
-			int size = rs.getRow();
-			rs.beforeFirst();
+			int size = Database.getNumberOfRows(rs);
 			Area[] areas = new Area[size];
 
 			int i = 0;

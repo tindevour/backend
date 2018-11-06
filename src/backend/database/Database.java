@@ -105,4 +105,12 @@ public class Database {
 		PreparedStatement st = createPreparedStatement(query, args);
 		return st.executeUpdate();
 	}
+
+	public static int getNumberOfRows(ResultSet rs) throws SQLException {
+		int current = rs.getRow();
+		rs.last();
+		int length = rs.getRow();
+		rs.absolute(current);
+		return length;
+	}
 }
