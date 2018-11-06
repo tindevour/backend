@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import backend.classes.Project;
+
 /**
  * Servlet implementation class Projects
  */
@@ -58,8 +60,9 @@ public class Projects extends HttpServlet {
 	/**
 	 * GET /projects/:project
 	 */
-	protected void getProject(HttpServletRequest request, HttpServletResponse response, int projectId) throws ServletException, IOException {
-		// TODO
+	protected void getProject(HttpServletRequest request, HttpServletResponse response, int pid) throws ServletException, IOException {
+		Project project = Project.getProjectById(pid);
+		Utils.jsonResponse(response, project);
 	}
 	
 	/**
