@@ -65,7 +65,7 @@ public class Auth extends HttpServlet {
 			Utils.okResponse(response);
 		}
 		else {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid credentials");
+			Utils.unauthorizedResponse(response);
 		}
 	}
 

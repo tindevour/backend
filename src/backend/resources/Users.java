@@ -120,7 +120,7 @@ public class Users extends HttpServlet {
 			Utils.jsonResponse(response, notifs);
 		}
 		catch (UnauthorizedError ex) {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are not authorized to access notifications of user: " + username);
+			Utils.unauthorizedResponse(response);
 		}
 	}
 

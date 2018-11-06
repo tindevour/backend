@@ -50,4 +50,8 @@ public class Utils {
 		response.setContentType("application/json");
 		response.getWriter().print("{\"status\": \"ok\"}");
 	}
+	
+	public static void unauthorizedResponse(HttpServletResponse response) throws IOException {
+		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are not authorized for this action");
+	}
 };
