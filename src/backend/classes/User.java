@@ -121,4 +121,20 @@ public class User implements Common {
 			return null;
 		}
 	}
+	
+	public boolean changePassword(String newPassword) throws UnauthorizedError {
+		if (this.isAuthenticated) {
+			String query = "update users set password=? where username=?";
+			try {
+				Database.executeUpdate(query, newPassword, this.username);
+				return true;
+			}
+			catch (SQLException ex) {
+				return false;
+			}
+		}
+		else {
+			throw new UnauthorizedError();
+		}
+	}
 }

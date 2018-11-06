@@ -54,4 +54,8 @@ public class Utils {
 	public static void unauthorizedResponse(HttpServletResponse response) throws IOException {
 		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are not authorized for this action");
 	}
+	
+	public static void errorResponse(HttpServletResponse response) throws IOException {
+		response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Some error occured");
+	}
 };

@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import backend.classes.Notification;
 import backend.classes.UnauthorizedError;
 import backend.classes.User;
@@ -67,10 +70,14 @@ public class Users extends HttpServlet {
 				forgotPassword(request, response);
 				break;
 			case "password":
-				changePassword(request, response);
+				if (username != ((User)request.getSession().getAttribute("user")).username)
+					Utils.unauthorizedResponse(response);
+				else
+					changePassword(request, response);
 				break;
 			case "spam":
 				reportSpam(request, response);
+				break;
 			}
 		}
 	}
@@ -78,8 +85,23 @@ public class Users extends HttpServlet {
 	/**
 	 * POST /users/:user/password
 	 */
-	protected void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+	protected void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		JsonElement tree = Utils.getJsonData(request);
+		JsonObject obj = tree.getAsJsonObject();
 		
+		String newPassword = obj.get("password").getAsString();
+		// Assuming the user is logged in
+		User currUser = (User)request.getSession().getAttribute("user");
+		try {
+			boolean wasSuccessful = currUser.changePassword(newPassword);
+			if (wasSuccessful)
+				Utils.okResponse(response);
+			else
+				Utils.errorResponse(response);
+		}
+		catch(UnauthorizedError ex) {
+			Utils.unauthorizedResponse(response);
+		}
 	}
 
 	/**
