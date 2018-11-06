@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import backend.resources.Utils;
+import backend.classes.User;
+
 /**
  * Servlet implementation class Users
  */
@@ -43,7 +46,7 @@ public class Users extends HttpServlet {
 			}
 		}	
 		else {
-			getUser(request, response);
+			getUser(request, response, username);
 		}
 	}
 
@@ -115,7 +118,8 @@ public class Users extends HttpServlet {
 	/**
 	 * GET /users/:user
 	 */
-	protected void getUser(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-		
+	protected void getUser(HttpServletRequest request, HttpServletResponse response, String username) throws ServletException, IOException {
+		User user = User.getByUsername(username);
+		Utils.jsonResponse(response, user);
 	}
 }
