@@ -20,4 +20,12 @@ public class Utils {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 	}
+
+	public static void jsonResponse(HttpServletResponse response, Common[] obj) throws IOException {
+		// no check for isNotFound because, we are returning a list, we are not searching for a specific object
+		response.setContentType("application/json");
+		Gson gson = new Gson();
+		String res = gson.toJson(obj);
+		response.getWriter().print(res);
+	}
 };

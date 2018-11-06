@@ -7,6 +7,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import backend.classes.Area;
+import backend.resources.Utils;
+
+
 /**
  * Servlet implementation class Areas
  */
@@ -26,6 +30,7 @@ public class Areas extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO
+		Area[] areas = Area.getAllAreas();
+		Utils.jsonResponse(response, areas);
 	}
 }
