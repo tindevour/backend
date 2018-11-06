@@ -6,6 +6,14 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import backend.classes.User;
+
 
 /**
  * Servlet implementation class Auth
@@ -43,7 +51,22 @@ public class Auth extends HttpServlet {
 	 * POST /auth/login
 	 */
 	protected void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO
+		JsonElement tree = Utils.getJsonData(request);
+		JsonObject obj = tree.getAsJsonObject();
+
+		String username = obj.get("username").getAsString();
+		String password = obj.get("password").getAsString();
+
+		User user = new User(username);
+		boolean valid = user.authenticate(password);
+		if (valid) {
+			HttpSession session = request.getSession();
+			session.setAttribute("user", user);
+			Utils.okResponse(response);
+		}
+		else {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid credentials");
+		}
 	}
 
 	/**
