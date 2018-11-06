@@ -148,4 +148,15 @@ public class User implements Common {
 			return false;
 		}
 	}
+	
+	public boolean reportSpam(int pid) {
+		try {
+			String query = "insert into project_spams(reporter, pid) values(?, ?)";
+			Database.executeQuery(query, this.username, pid);
+			return true;
+		}
+		catch(SQLException ex) {
+			return false;
+		}
+	}
 }

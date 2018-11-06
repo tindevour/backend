@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import backend.classes.Project;
+import backend.classes.User;
 
 /**
  * Servlet implementation class Projects
@@ -40,11 +41,11 @@ public class Projects extends HttpServlet {
 		
 		if (pathInfo.length > 1) {
 			String actionRes = pathInfo[2];
-			String projectId = pathInfo[1];
+			int projectId = Integer.parseInt(pathInfo[1]);
 			
 			switch(actionRes) {
 			case "spam":
-				reportSpam(request, response);
+				reportSpam(request, response, projectId);
 				break;
 			case "liking":
 				changeLiking(request, response);
@@ -75,8 +76,13 @@ public class Projects extends HttpServlet {
 	/** 
 	 * POST /projects/:project/spam
 	 */
-	protected void reportSpam(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO
+	protected void reportSpam(HttpServletRequest request, HttpServletResponse response, int projectId) throws ServletException, IOException {
+		User currUser = (User)request.getSession().getAttribute("user");
+		boolean wasSuccessful = currUser.reportSpam(projectId);
+		if (wasSuccessful)
+			Utils.okResponse(response);
+		else
+			Utils.errorResponse(response);
 	}
 
 	/**
