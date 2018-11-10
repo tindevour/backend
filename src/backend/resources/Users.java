@@ -18,7 +18,7 @@ import backend.resources.Utils;
 /**
  * Servlet implementation class Users
  */
-@WebServlet("/users/*")
+@WebServlet({ "/users/*", "/me" })
 public class Users extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -35,24 +35,33 @@ public class Users extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String[] pathInfo = request.getPathInfo().split("/");
 		
-		String username = pathInfo[1];
-		if (pathInfo.length > 2) {
-			String resource = pathInfo[2];
-			
-			switch(resource) {
-			case "feed":
-				getFeed(request, response);
-				break;
-			case "notifications":
-				getNotifications(request, response, username);
-				break;
-			case "chats":
-				getChats(request, response);
+		switch(pathInfo[0]) {
+		case "users":
+			String username = pathInfo[1];
+			if (pathInfo.length > 2) {
+				String resource = pathInfo[2];
+
+				switch(resource) {
+				case "feed":
+					getFeed(request, response);
+					break;
+				case "notifications":
+					getNotifications(request, response, username);
+					break;
+				case "chats":
+					getChats(request, response);
+				}
 			}
-		}	
-		else {
-			getUser(request, response, username);
+			else {
+				getUser(request, response, username);
+			}
+
+			break;
+		case "me":
+			me(request, response);
+			break;
 		}
+
 	}
 
 	/**
@@ -162,5 +171,13 @@ public class Users extends HttpServlet {
 	protected void getUser(HttpServletRequest request, HttpServletResponse response, String username) throws ServletException, IOException {
 		User user = User.getByUsername(username);
 		Utils.jsonResponse(response, user);
+	}
+
+	/**
+	 * GET /me
+	 */
+	protected void me(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User user = (User)request.getSession(false).getAttribute("user");
+		getUser(request, response, user.username);
 	}
 }
