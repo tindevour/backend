@@ -1,2 +1,3 @@
 # ignore the build directory because it contains compiled class files
 build/
+.classpath
